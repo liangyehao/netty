@@ -1,4 +1,4 @@
-package com.liang.chatroom.server;
+package com.liang.chatroom.v1.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
