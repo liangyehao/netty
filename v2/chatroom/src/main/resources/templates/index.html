@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>chat room</title>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.5.1.min.js"></script>
+    <script>
+        var ws;
+        $(
+            function webSocket() {
+                if ("WebSocket" in window) {
+                    ws = new WebSocket("ws://123.57.177.220:8099"); //创建WebSocket连接
+                    //申请一个WebSocket对象，参数是服务端地址，同http协议使用http://开头一样，WebSocket协议的url使用ws://开头，另外安全的WebSocket协议使用wss://开头
+                    ws.onopen = function () {
+                        //当WebSocket创建成功时，触发onopen事件
+                        console.log("WebSocket创建成功");
+                        $("#show").append("<div style='color: green'>[客户端连接成功]</div>")
+                            .append("<hr style='border:1px dashed #000' />");
+
+
+                    };
+                    ws.onmessage = function (e) {
+                        //当客户端收到服务端发来的消息时，触发onmessage事件，参数e.data包含server传递过来的数据
+                        console.log(e.data);
+                        if (e.data.indexOf("【我】")!==-1) {
+                            $("#show").append("<div style='text-align: right'>"+e.data+"<br /></div>")
+                                .append("<hr style='border:1px dashed #000' />");
+                        }else{
+                            $("#show").append("<div>"+e.data+"<br /></div>")
+                                .append("<hr style='border:1px dashed #000' />");
+                        }
+                    };
+                    ws.onclose = function (e) {
+                        //当客户端收到服务端发送的关闭连接请求时，触发onclose事件
+                        console.log("close");
+                        $("#show").append("<div style='color: red'>[服务端已关闭]<br /></div>")
+                            .append("<hr style='border:1px dashed #000' />");
+                    };
+                    ws.onerror = function (e) {
+                        //如果出现连接、处理、接收、发送数据失败的时候触发onerror事件
+                        console.log(e);
+                        $("#show").append(e);
+                    };
+                } else {
+                    alert("您的浏览器不支持WebSocket");
+                }
+            }
+        );
+
+        function send() {
+            const msg = $('#content').val();
+            ws.send(msg);
+        }
+    </script>
+</head>
+<body>
+<div>
+    <div id="show" style="border: solid black 1px;width: 400px;height: 600px;">
+        <h4 style="text-align: center">欢迎来到聊天室</h4>
+        <hr/>
+    </div>
+    <label for="content"></label><input id="content" name="content" type="text">
+    <button onclick="send()">发送</button>
+</div>
+</body>
+</html>
