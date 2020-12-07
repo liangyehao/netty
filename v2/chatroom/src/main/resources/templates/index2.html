@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>chat room</title>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.5.1.min.js"></script>
+    <script>
+        var ws;
+        $(
+            function webSocket() {
+                if ("WebSocket" in window) {
+                    ws = new WebSocket("ws://localhost:8099");
+                    ws.onopen = function () {
+                        ws.send("@online");
+                    };
+                    ws.onmessage = function (e) {
+                        console.log(e.data);
+                        const parse = JSON.parse(e.data);
+                        if (parse.type === 'system') {
+                            $("#show").append("<div style='text-align: center'><span style='color: #ffc107'>" + parse.msg + "<br /></span></div>")
+                                .append("<hr style='border:1px dashed #000' />");
+                        }
+                        if (parse.type === 'me') {
+                            const content = parse.msg+'&nbsp;'
+                                +"<span style='background-color: crimson;color: white;'>["+parse.name+"]</span>";
+                            $("#show").append("<div style='text-align: right'>"+content+"<br /></div>")
+                                .append("<hr style='border:1px dashed #000' />");
+                        }
+                        if (parse.type === 'other') {
+                            const content = ""
+                            $("#show").append("<div style='text-align: right'>")
+                                .append("<span style='background-color: cadetblue;color: white;'>["+parse.name+"]</span>")
+                                .append('&nbsp;'+parse.msg)
+                                .append("<br /></div>")
+                                .append("<hr style='border:1px dashed #000' />");
+                        }
+                    };
+                    ws.onclose = function (e) {
+
+                    };
+                    ws.onerror = function (e) {
+                        console.log(e);
+                        $("#show").append(e);
+                    };
+                } else {
+                    alert("您的浏览器不支持WebSocket");
+                }
+
+            }
+        );
+
+        function send() {
+            const msg = $('#content').val();
+            ws.send(msg);
+        }
+
+        function clearScreen() {
+            console.log("11")
+            $('#show').html("<h4 style='text-align: center'>欢迎来到聊天室</h4><hr />");
+        }
+    </script>
+</head>
+<body>
+<div>
+    <div id="show" style="border: solid black 1px;width: 400px;height: 600px;overflow: auto;margin: auto">
+        <h4 style="text-align: center">欢迎来到聊天室</h4>
+        <hr />
+    </div>
+    <div style="margin-top: 10px;text-align: center">
+        <label for="content"></label><textarea rows="3" style="width: 30%;" id="content" name="content"></textarea>
+        <button onclick="send()">发送</button>
+        <button onclick="clearScreen()">清屏</button>
+    </div>
+</div>
+</body>
+</html>

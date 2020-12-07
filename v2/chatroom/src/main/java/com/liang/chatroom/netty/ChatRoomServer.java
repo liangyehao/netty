@@ -33,7 +33,7 @@ public class ChatRoomServer {
                             pipeline.addLast(new HttpServerCodec())
                                     .addLast(new HttpObjectAggregator(1024*10))
                                     .addLast(new WebSocketServerProtocolHandler("/"))
-                                    .addLast(new WebSocketChannelHandler());
+                                    .addLast(new WebSocketChannelHandler2());
                         }
                     });
 
