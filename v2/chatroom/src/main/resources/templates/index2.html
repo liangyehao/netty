@@ -9,13 +9,17 @@
         $(
             function webSocket() {
                 if ("WebSocket" in window) {
-                    ws = new WebSocket("ws://localhost:8099");
+                    // ws = new WebSocket("ws://localhost:8099");
+                    ws = new WebSocket("ws://123.57.177.220:8099");
                     ws.onopen = function () {
                         ws.send("@online");
                     };
                     ws.onmessage = function (e) {
                         console.log(e.data);
                         const parse = JSON.parse(e.data);
+                        if (parse.type==='onlineNumber'){
+                            $("#title").html("<span>欢迎来到聊天室[在线("+parse.msg+")]</span>");
+                        }
                         if (parse.type === 'system') {
                             $("#show").append("<div style='text-align: center'><span style='color: #ffc107'>" + parse.msg + "<br /></span></div>")
                                 .append("<hr style='border:1px dashed #000' />");
@@ -52,22 +56,23 @@
         function send() {
             const msg = $('#content').val();
             ws.send(msg);
+            $('#content').val("");
         }
 
         function clearScreen() {
-            console.log("11")
-            $('#show').html("<h4 style='text-align: center'>欢迎来到聊天室</h4><hr />");
+            $('#show').html("<h4 id='title' style='text-align: center'></h4><hr />");
+            ws.send("@online");
         }
     </script>
 </head>
 <body>
 <div>
-    <div id="show" style="border: solid black 1px;width: 400px;height: 600px;overflow: auto;margin: auto">
-        <h4 style="text-align: center">欢迎来到聊天室</h4>
+    <div id="show" style="border: solid black 1px;width: 80%; height: 600px;overflow: auto;margin: auto">
+        <h4 id="title" style="text-align: center"></h4>
         <hr />
     </div>
     <div style="margin-top: 10px;text-align: center">
-        <label for="content"></label><textarea rows="3" style="width: 30%;" id="content" name="content"></textarea>
+        <label for="content"></label><textarea rows="3" style="width: 70%;" id="content" name="content"></textarea>
         <button onclick="send()">发送</button>
         <button onclick="clearScreen()">清屏</button>
     </div>

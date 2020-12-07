@@ -91,12 +91,13 @@ public class WebSocketChannelHandler2 extends SimpleChannelInboundHandler<TextWe
         String id = current.id().asLongText();
         CHANNELS.remove(current);
         noticeAll(new MsgDTO("["+ USERS.get(id)+"]下线了","system"));
+        noticeOnlineNumber();
         USERS.remove(id);
     }
 
 
     private void noticeOnlineNumber(){
-        MsgDTO dto = new MsgDTO("当前在线人数:"+ CHANNELS.size(),"system");
+        MsgDTO dto = new MsgDTO(String.valueOf(CHANNELS.size()),"onlineNumber");
         for (Channel channel : CHANNELS) {
             TextWebSocketFrame resp = new TextWebSocketFrame(toJsonString(dto));
             channel.writeAndFlush(resp);
